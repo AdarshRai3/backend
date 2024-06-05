@@ -19,15 +19,7 @@ $data = array();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $data[] = array(
-            "eid" => $row["eid"],
-            "name" => $row["Name"],
-            "position" => $row["position"],
-            "department" => $row["Department"],
-            "office_location" => $row["office_location"],
-            "hire-date" => $row["Hire-date"],
-            "photo" => $row["Photo"]
-        );
+        $data[] = $row;
     }
 } else {
     $data = array(

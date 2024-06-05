@@ -15,26 +15,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = isset($_POST['email']) ? $_POST['email'] : '';
     $permanentAddress = isset($_POST['permanent-address']) ? $_POST['permanent-address'] : '';
     $residentialAddress = isset($_POST['residential-address']) ? $_POST['residential-address'] : '';
-    $photo = '';
+    $photo_path = isset($_POST['photo_path']) ? $_POST['photo_path'] : '';
     $salary= isset($_POST['salary']) ? $_POST['salary'] : '';
     $hireDate = isset($_POST['Hire-Date']) ? $_POST['Hire-Date'] : '';
 
-    if (isset($_FILES['photo']) && $_FILES['photo']['tmp_name'] != '') {
-        $photo = addslashes(file_get_contents($_FILES['photo']['tmp_name']));
-    }
-
-    $sql = "INSERT INTO directory (`Name`, `Job Title`, `Department`, `Office_Location`, `PAN_Card_Number`, `Govt_ID_Number`, `Permanent_Address`, `Residential_Address`, `Phone`, `Email`, `Photo`, `Hire-Date`,`Salary`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+    $sql = "INSERT INTO directory (`Name`, `Job Title`, `Department`, `Office_Location`, `PAN_Card_Number`, `Govt_ID_Number`, `Permanent_Address`, `Residential_Address`, `Phone`, `Email`, `Photo`, `Hire-Date`, `Salary`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $con->prepare($sql);
     if ($stmt === false) {
         echo "Error preparing the statement: " . $con->error;
     } else {
-        $stmt->bind_param("sssssssssssss", $name, $jobTitle, $department, $officeLocation, $panCard, $govtId, $permanentAddress, $residentialAddress, $phone, $email, $photo, $hireDate,$salary);
+        $stmt->bind_param("sssssssssssss", $name, $jobTitle, $department, $officeLocation, $panCard, $govtId, $permanentAddress, $residentialAddress, $phone, $email, $photo_path, $hireDate, $salary);
 
         if ($stmt->execute()) {
             $directory_id = $con->insert_id;
 
-            
+            // Insert data into the login table
             $sql = "INSERT INTO login (`Name`, `EID`, `Email`, `Password`)
                     VALUES (?, ?, ?, CONCAT(?, ?))";
             $stmt = $con->prepare($sql);
