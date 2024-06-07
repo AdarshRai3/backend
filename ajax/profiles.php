@@ -12,7 +12,8 @@ header("Content-Type: application/json");
 
 include_once 'connection.php';
 
-$sql = "SELECT eid, `Name`, `Job Title` AS position, `Department`, `Office_Location` AS office_location, `Hire-date`, `Photo` FROM directory";
+$sql = "SELECT eid, `Name`, `Job Title` AS position, `Department`, `Office_Location` AS office_location, `Hire-date`, `Photo`, `Salary`
+        FROM directory";
 $result = $con->query($sql);
 
 $data = array();
@@ -30,7 +31,8 @@ if ($result->num_rows > 0) {
             "department" => "",
             "office_location" => "",
             "hire-date" => "",
-            "photo" => ""
+            "photo" => "",
+            "salary" => ""
         )
     );
 }
