@@ -8,7 +8,7 @@ include_once 'connection.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inputJSON = file_get_contents('php://input');
     $input = json_decode($inputJSON, true);
-    
+
     $id = $input['id'];
     $eid = $input['eid'];
     $action = $input['action'];
@@ -16,13 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $endDate = $input['endDate'];
 
     if ($action === 'reject') {
-        // Delete the employee from the offboarding table
         $sql = "DELETE FROM `application` WHERE id = ?";
         $message = "Application has been rejected";
+        $notificationMessage = "Your leave application has been rejected for the period from $startDate to $endDate.";
     } else if ($action === 'approve') {
-        // Delete the employee from the directory table
         $sql = "DELETE FROM `application` WHERE id = ?";
         $message = "Application has been accepted.";
+        $notificationMessage = "Your leave application has been approved for the period from $startDate to $endDate.";
     } else {
         $response = array('status' => 'error', 'message' => 'Invalid action');
         echo json_encode($response);
@@ -41,6 +41,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response = array('status' => 'error', 'message' => 'Execute failed: ' . $stmt->error);
     } else {
         if ($stmt->affected_rows > 0) {
+            // Insert the notification message into the 'notifications' table
+            $notificationSql = "INSERT INTO notifications (eid, `notification`) VALUES (?, ?)";
+            $notificationStmt = $con->prepare($notificationSql);
+            if ($notificationStmt) {
+                $notificationStmt->bind_param("ss", $eid, $notificationMessage);
+                $notificationStmt->execute();
+                $notificationStmt->close();
+            }
+
             $response = array('status' => 'success', 'message' => $message);
         } else {
             $response = array('status' => 'warning', 'message' => "No rows were affected. Employee with ID $id might not exist in the table.");
