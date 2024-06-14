@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = isset($_POST['Name']) ? $_POST['Name'] : '';
     $department = isset($_POST['Department']) ? $_POST['Department'] : '';
 
-    $sql = "INSERT INTO Types (eid, name, department, leave_type, start_date, end_date, reason)
+    $sql = "INSERT INTO `application` (eid, name, department, leave_type, start_date, end_date, reason)
             VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $con->prepare($sql);
     if ($stmt === false) {
